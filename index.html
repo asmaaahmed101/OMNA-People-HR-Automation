@@ -6,75 +6,114 @@
 <title>OMNA People</title>
 <style>
   * { box-sizing: border-box; }
-  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 24px 16px; color: #1f2430; background: #fafafa; }
-  h1 { margin: 0 0 4px; font-size: 2rem; }
-  h2 { margin-top: 36px; }
-  .sub { color: #5b6472; margin-top: 0; }
-  .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: #eee; font-size: .85rem; font-weight: 600; }
-  .badge.on { background: #d7f5e3; color: #17603a; }
-  .badge.off { background: #fde2e2; color: #8f1d1d; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
-  .card { display: block; background: #fff; border: 1px solid #e3e6eb; border-radius: 14px; padding: 16px; text-decoration: none; color: inherit; transition: box-shadow .15s; }
-  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
-  .card b { display: block; margin-bottom: 4px; }
-  .card span { color: #5b6472; font-size: .9rem; }
-  #msgs { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 12px; min-height: 160px; }
-  .me { text-align: right; margin: 6px 0; }
-  .me::before { content: "You: "; font-weight: 600; color: #5b6472; font-size: .8rem; }
-  .bot { margin: 6px 0; white-space: pre-wrap; }
-  .bot::before { content: "OMNA: "; font-weight: 600; color: #5b6472; font-size: .8rem; }
-  form#ask { display: flex; gap: 8px; margin-top: 10px; }
-  form#ask input { flex: 1; padding: 10px 12px; border: 1px solid #cfd4dc; border-radius: 10px; font-size: 1rem; }
-  button, .btn { padding: 10px 18px; border: 0; border-radius: 10px; background: #2f6fed; color: #fff; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; }
-  .btn.secondary { background: #eef2ff; color: #2f6fed; }
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1f2430; background: #f4f6fb; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+  .hero { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #0ea5e9 100%); color: #fff; padding: 48px 0 40px; border-radius: 0 0 28px 28px; }
+  .hero h1 { margin: 0 0 8px; font-size: 2.4rem; letter-spacing: -.5px; }
+  .hero p { margin: 0 0 16px; font-size: 1.05rem; opacity: .92; max-width: 560px; }
+  .badge { display: inline-block; padding: 5px 14px; border-radius: 999px; background: rgba(255,255,255,.25); font-size: .85rem; font-weight: 700; }
+  .badge.on { background: #bbf7d0; color: #14532d; }
+  .badge.off { background: #fecaca; color: #7f1d1d; }
+
+  h2 { margin: 40px 0 4px; font-size: 1.5rem; }
+  .hint { color: #6b7280; margin: 0 0 16px; font-size: .95rem; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .card { display: block; background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; border: 1px solid #e8eaf1; box-shadow: 0 2px 8px rgba(31,36,48,.05); transition: transform .15s, box-shadow .15s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(79,70,229,.15); }
+  .card .ico { font-size: 1.8rem; display: block; margin-bottom: 10px; }
+  .card b { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+  .card span { color: #6b7280; font-size: .9rem; line-height: 1.4; }
+  .card.c1 { border-top: 4px solid #4f46e5; }
+  .card.c2 { border-top: 4px solid #0ea5e9; }
+  .card.c3 { border-top: 4px solid #10b981; }
+
+  .panel { background: #fff; border: 1px solid #e8eaf1; border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(31,36,48,.05); }
+  #msgs { min-height: 170px; }
+  .me { margin: 8px 0; text-align: right; }
+  .me span { display: inline-block; background: #4f46e5; color: #fff; padding: 8px 14px; border-radius: 16px 16px 4px 16px; max-width: 80%; text-align: left; }
+  .bot { margin: 8px 0; }
+  .bot span { display: inline-block; background: #eef2ff; color: #1f2430; padding: 8px 14px; border-radius: 16px 16px 16px 4px; max-width: 80%; white-space: pre-wrap; }
+  form#ask { display: flex; gap: 8px; margin-top: 12px; }
+  form#ask input { flex: 1; padding: 12px 14px; border: 1px solid #d6dae4; border-radius: 12px; font-size: 1rem; }
+  form#ask input:focus { outline: 2px solid #4f46e5; border-color: transparent; }
+
+  button, .btn { padding: 12px 22px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+  .btn.sky { background: linear-gradient(135deg, #0ea5e9, #22d3ee); }
   a.disabled { pointer-events: none; opacity: .5; }
-  ol.steps li { margin-bottom: 8px; }
-  .downloads a { display: inline-block; margin: 4px 12px 4px 0; }
-  footer { margin-top: 40px; color: #8a93a1; font-size: .85rem; }
+  .btnrow { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  ol.steps { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  ol.steps li { counter-increment: step; display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 1px solid #e8eaf1; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+  ol.steps li::before { content: counter(step); flex: 0 0 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #0ea5e9); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
+  ol.steps b { display: block; margin-bottom: 2px; }
+  ol.steps .d { color: #6b7280; font-size: .9rem; }
+
+  .downloads { display: flex; flex-wrap: wrap; gap: 10px; }
+  .downloads a { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 8px 14px; border-radius: 999px; text-decoration: none; font-size: .9rem; font-weight: 600; }
+  .downloads a:hover { background: #d1fae5; }
+
+  footer { margin: 44px 0 24px; color: #9aa1af; font-size: .85rem; text-align: center; }
 </style>
 </head>
 <body>
 
-<h1>OMNA People</h1>
-<p class="sub">HR help for small teams: ask the policy assistant, get interview coaching, and apply for a job. Built with n8n.</p>
-<span class="badge" id="status">Checking…</span>
+<div class="hero">
+  <div class="wrap">
+    <h1>OMNA People</h1>
+    <p>HR help for small teams: ask the policy assistant, get interview coaching, and apply for a job. Built with n8n.</p>
+    <span class="badge" id="status">Checking…</span>
+  </div>
+</div>
+
+<div class="wrap">
 
 <h2>Choose what you want</h2>
+<p class="hint">Three ways to use the system — pick one.</p>
 <div class="cards">
-  <a class="card" href="#ask-hr"><b>Ask HR</b><span>Chat with the policy assistant about leave, benefits and more.</span></a>
-  <a class="card" href="#apply"><b>Get coached</b><span>Send your CV and get an interview coaching report.</span></a>
-  <a class="card" href="#apply"><b>Apply</b><span>Fill in the application form and our AI screens it.</span></a>
+  <a class="card c1" href="#ask-hr"><span class="ico">💬</span><b>Ask HR</b><span>Chat with the policy assistant about leave, benefits and more.</span></a>
+  <a class="card c2" href="#apply"><span class="ico">🎯</span><b>Get coached</b><span>Send your CV and get an interview coaching report.</span></a>
+  <a class="card c3" href="#apply"><span class="ico">📝</span><b>Apply</b><span>Fill in the application form and our AI screens it.</span></a>
 </div>
 
 <h2 id="ask-hr">Ask HR</h2>
-<div id="msgs"></div>
-<form id="ask"><input id="q" placeholder="How many leave days do I get?" required> <button>Ask</button></form>
+<p class="hint">Answers come from the company's policy documents.</p>
+<div class="panel">
+  <div id="msgs"></div>
+  <form id="ask"><input id="q" placeholder="How many leave days do I get?" required> <button>Ask</button></form>
+</div>
 
 <h2 id="apply">Apply or get coached</h2>
-<p>
+<p class="hint">Both buttons open your real n8n forms.</p>
+<div class="panel btnrow">
   <a class="btn" id="applyLink" target="_blank" rel="noopener">Apply for a job</a>
-  <a class="btn secondary" id="coachLink" target="_blank" rel="noopener">Get a coaching report</a>
-</p>
+  <a class="btn sky" id="coachLink" target="_blank" rel="noopener">Get a coaching report</a>
+</div>
 
 <h2>How it works</h2>
+<p class="hint">Five n8n workflows run the whole system.</p>
 <ol class="steps">
-  <li><b>Intake:</b> a form collects the applicant's details and CV.</li>
-  <li><b>AI scan:</b> an AI agent reads the application, scores the fit and writes the result to a tracking sheet.</li>
-  <li><b>Handler:</b> errors from every workflow are caught and logged in one place.</li>
-  <li><b>HR Policy Chatbot:</b> an AI agent answers questions from the company policy documents, and says which policy it used.</li>
-  <li><b>Job Application Coach:</b> an AI agent reviews a CV and sends back a coaching report.</li>
+  <li><div><b>Intake</b><span class="d">A form collects the applicant's details and CV.</span></div></li>
+  <li><div><b>AI scan</b><span class="d">An AI agent reads the application, scores the fit and writes the result to a tracking sheet.</span></div></li>
+  <li><div><b>Handler</b><span class="d">Errors from every workflow are caught and logged in one place.</span></div></li>
+  <li><div><b>HR Policy Chatbot</b><span class="d">An AI agent answers questions from the company policy documents, and says which policy it used.</span></div></li>
+  <li><div><b>Job Application Coach</b><span class="d">An AI agent reviews a CV and sends back a coaching report.</span></div></li>
 </ol>
 
 <h2>Download the workflows</h2>
-<p class="downloads">
+<p class="hint">Cleaned JSON files — import them into any n8n.</p>
+<div class="downloads">
   <a href="workflows/recruitment-1-intake.json">recruitment-1-intake.json</a>
   <a href="workflows/recruitment-2-scan.json">recruitment-2-scan.json</a>
   <a href="workflows/recruitment-3-handler.json">recruitment-3-handler.json</a>
   <a href="workflows/hr-policy-chatbot.json">hr-policy-chatbot.json</a>
   <a href="workflows/job-application-coach.json">job-application-coach.json</a>
-</p>
+</div>
 
 <footer>Live only while the project's n8n server is running. When it is off, the badge shows Offline and the buttons are paused.</footer>
+
+</div>
 
 <script>
 const CONFIG = {
@@ -107,7 +146,7 @@ async function checkStatus() {
 }
 checkStatus();
 
-function add(cls, text) { const d = document.createElement("div"); d.className = cls; d.textContent = text; $("#msgs").append(d); return d; }
+function add(cls, text) { const d = document.createElement("div"); d.className = cls; const s = document.createElement("span"); s.textContent = text; d.append(s); $("#msgs").append(d); $("#msgs").scrollTop = $("#msgs").scrollHeight; return s; }
 
 $("#ask").onsubmit = async e => {
   e.preventDefault(); const q = $("#q").value.trim(); $("#q").value = ""; add("me", q);
