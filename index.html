@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OMNA People</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 24px 16px; color: #1f2430; background: #fafafa; }
+  h1 { margin: 0 0 4px; font-size: 2rem; }
+  h2 { margin-top: 36px; }
+  .sub { color: #5b6472; margin-top: 0; }
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: #eee; font-size: .85rem; font-weight: 600; }
+  .badge.on { background: #d7f5e3; color: #17603a; }
+  .badge.off { background: #fde2e2; color: #8f1d1d; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+  .card { display: block; background: #fff; border: 1px solid #e3e6eb; border-radius: 14px; padding: 16px; text-decoration: none; color: inherit; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .card b { display: block; margin-bottom: 4px; }
+  .card span { color: #5b6472; font-size: .9rem; }
+  #msgs { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 12px; min-height: 160px; }
+  .me { text-align: right; margin: 6px 0; }
+  .me::before { content: "You: "; font-weight: 600; color: #5b6472; font-size: .8rem; }
+  .bot { margin: 6px 0; white-space: pre-wrap; }
+  .bot::before { content: "OMNA: "; font-weight: 600; color: #5b6472; font-size: .8rem; }
+  form#ask { display: flex; gap: 8px; margin-top: 10px; }
+  form#ask input { flex: 1; padding: 10px 12px; border: 1px solid #cfd4dc; border-radius: 10px; font-size: 1rem; }
+  button, .btn { padding: 10px 18px; border: 0; border-radius: 10px; background: #2f6fed; color: #fff; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; }
+  .btn.secondary { background: #eef2ff; color: #2f6fed; }
+  a.disabled { pointer-events: none; opacity: .5; }
+  ol.steps li { margin-bottom: 8px; }
+  .downloads a { display: inline-block; margin: 4px 12px 4px 0; }
+  footer { margin-top: 40px; color: #8a93a1; font-size: .85rem; }
+</style>
+</head>
+<body>
+
+<h1>OMNA People</h1>
+<p class="sub">HR help for small teams: ask the policy assistant, get interview coaching, and apply for a job. Built with n8n.</p>
+<span class="badge" id="status">Checking…</span>
+
+<h2>Choose what you want</h2>
+<div class="cards">
+  <a class="card" href="#ask-hr"><b>Ask HR</b><span>Chat with the policy assistant about leave, benefits and more.</span></a>
+  <a class="card" href="#apply"><b>Get coached</b><span>Send your CV and get an interview coaching report.</span></a>
+  <a class="card" href="#apply"><b>Apply</b><span>Fill in the application form and our AI screens it.</span></a>
+</div>
+
+<h2 id="ask-hr">Ask HR</h2>
+<div id="msgs"></div>
+<form id="ask"><input id="q" placeholder="How many leave days do I get?" required> <button>Ask</button></form>
+
+<h2 id="apply">Apply or get coached</h2>
+<p>
+  <a class="btn" id="applyLink" target="_blank" rel="noopener">Apply for a job</a>
+  <a class="btn secondary" id="coachLink" target="_blank" rel="noopener">Get a coaching report</a>
+</p>
+
+<h2>How it works</h2>
+<ol class="steps">
+  <li><b>Intake:</b> a form collects the applicant's details and CV.</li>
+  <li><b>AI scan:</b> an AI agent reads the application, scores the fit and writes the result to a tracking sheet.</li>
+  <li><b>Handler:</b> errors from every workflow are caught and logged in one place.</li>
+  <li><b>HR Policy Chatbot:</b> an AI agent answers questions from the company policy documents, and says which policy it used.</li>
+  <li><b>Job Application Coach:</b> an AI agent reviews a CV and sends back a coaching report.</li>
+</ol>
+
+<h2>Download the workflows</h2>
+<p class="downloads">
+  <a href="workflows/recruitment-1-intake.json">recruitment-1-intake.json</a>
+  <a href="workflows/recruitment-2-scan.json">recruitment-2-scan.json</a>
+  <a href="workflows/recruitment-3-handler.json">recruitment-3-handler.json</a>
+  <a href="workflows/hr-policy-chatbot.json">hr-policy-chatbot.json</a>
+  <a href="workflows/job-application-coach.json">job-application-coach.json</a>
+</p>
+
+<footer>Live only while the project's n8n server is running. When it is off, the badge shows Offline and the buttons are paused.</footer>
+
+<script>
+const CONFIG = {
+    n8nBase: "https://curtain-outward-magnesium.ngrok-free.dev",
+    chat: "/webhook/acc797fc-c32d-4f9a-b4ac-cf11762ea958/chat",
+    applyForm: "/form/033ece1f-10ed-4567-a149-5c0f3b21b4ca",
+    coachForm: "/form/4f1fee84-7be5-48b1-8291-660ad342571f"
+};
+const $ = s => document.querySelector(s);
+const sessionId = crypto.randomUUID();
+const HEADERS = { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" };
+
+$("#applyLink").href = CONFIG.n8nBase + CONFIG.applyForm;
+$("#coachLink").href = CONFIG.n8nBase + CONFIG.coachForm;
+
+function setStatus(online) {
+  $("#status").textContent = online ? "Online" : "Offline, please try again later";
+  $("#status").className = "badge " + (online ? "on" : "off");
+  document.querySelectorAll("#applyLink, #coachLink").forEach(a => a.classList.toggle("disabled", !online));
+}
+
+// Any answer from the chat webhook means n8n and ngrok are both running.
+// When either is off, ngrok's error page has no CORS headers, so fetch fails.
+async function checkStatus() {
+  try {
+    await fetch(CONFIG.n8nBase + CONFIG.chat, { method: "POST", headers: HEADERS,
+      body: JSON.stringify({ action: "loadPreviousSession", sessionId }) });
+    setStatus(true);
+  } catch (err) { setStatus(false); }
+}
+checkStatus();
+
+function add(cls, text) { const d = document.createElement("div"); d.className = cls; d.textContent = text; $("#msgs").append(d); return d; }
+
+$("#ask").onsubmit = async e => {
+  e.preventDefault(); const q = $("#q").value.trim(); $("#q").value = ""; add("me", q);
+  const bot = add("bot", "…");
+  try {
+    const r = await fetch(CONFIG.n8nBase + CONFIG.chat, { method: "POST", headers: HEADERS,
+      body: JSON.stringify({ action: "sendMessage", sessionId, chatInput: q }) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    bot.textContent = (await r.json()).output;
+    setStatus(true);
+  } catch (err) {
+    bot.textContent = "The HR assistant is offline right now. Please try again later.";
+    setStatus(false);
+  }
+};
+</script>
+</body>
+</html>
